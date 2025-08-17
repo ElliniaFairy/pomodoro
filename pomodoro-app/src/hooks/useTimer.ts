@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
+import { saveCurrentSession, loadCurrentSession, saveHistory, loadHistory, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
 
 interface AppState {
   currentSession: PomodoroSession | null;
@@ -25,12 +26,12 @@ const defaultProgress: UserProgress = {
   todaySessions: 0
 };
 
-const initialState: AppState = {
-  currentSession: null,
-  history: [],
-  settings: defaultSettings,
-  progress: defaultProgress,
-};
+const createInitialState = (): AppState => ({
+  currentSession: loadCurrentSession(),
+  history: loadHistory(),
+  settings: loadSettings() || defaultSettings,
+  progress: loadProgress() || defaultProgress,
+});
 
 function generateId(): string {
   return Date.now().toString();
@@ -120,7 +121,7 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
 }
 
 function useTimer() {
-  const [state, dispatch] = useReducer(timerReducer, initialState);
+  const [state, dispatch] = useReducer(timerReducer, createInitialState());
   const [, forceUpdate] = useState(0);
   
   const isRunning = !!state.currentSession;
@@ -140,6 +141,26 @@ function useTimer() {
 
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // Save current session whenever it changes
+  useEffect(() => {
+    saveCurrentSession(state.currentSession);
+  }, [state.currentSession]);
+
+  // Save history whenever it changes
+  useEffect(() => {
+    saveHistory(state.history);
+  }, [state.history]);
+
+  // Save settings whenever they change
+  useEffect(() => {
+    saveSettings(state.settings);
+  }, [state.settings]);
+
+  // Save progress whenever it changes
+  useEffect(() => {
+    saveProgress(state.progress);
+  }, [state.progress]);
   return {
     currentSession: state.currentSession,
     history: state.history,
@@ -150,9 +171,33 @@ function useTimer() {
     startSession: (sessionType: 'focus' | 'break', options?: { startTime?: Date, endTime?: Date, duration?: number, taskDescription?: string }) => {
       let { startTime, endTime, taskDescription } = options ?? {};
       startTime = startTime || new Date();
-      endTime = endTime || addMinutes(startTime, options?.duration ?? (sessionType === 'focus' 
-        ? state.settings.defaultFocusDuration
-        : state.settings.defaultFocusDuration * state.settings.breakRatio));
+      
+      if (!endTime && !options?.duration) {
+        if (sessionType === 'focus') {
+          endTime = addMinutes(startTime, state.settings.defaultFocusDuration);
+        } else {
+          // Break session: calculate duration based on actual focus time (1/3 of what was actually worked)
+          let breakDuration = state.settings.defaultFocusDuration * state.settings.breakRatio; // fallback default
+          
+          if (state.currentSession && state.currentSession.type === 'focus') {
+            // Currently in focus session - use actual time worked so far
+            const actualFocusDuration = (startTime.getTime() - new Date(state.currentSession.startTime).getTime()) / (1000 * 60); // in minutes
+            breakDuration = actualFocusDuration * state.settings.breakRatio;
+          } else if (state.history.length > 0) {
+            // Not in focus session - use last completed focus session duration
+            const lastFocusSession = [...state.history].reverse().find(session => session.type === 'focus');
+            if (lastFocusSession) {
+              const actualFocusDuration = (new Date(lastFocusSession.endTime).getTime() - new Date(lastFocusSession.startTime).getTime()) / (1000 * 60); // in minutes
+              breakDuration = actualFocusDuration * state.settings.breakRatio;
+            }
+          }
+          
+          endTime = addMinutes(startTime, breakDuration);
+        }
+      } else if (!endTime) {
+        endTime = addMinutes(startTime, options?.duration ?? 0);
+      }
+      
       dispatch({
         type: 'START_SESSION',
         sessionType,

@@ -24,7 +24,7 @@ const Container = styled.div`
 
 const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'break' }>`
   font-size: 5rem;
-  font-family: 'Courier New', monospace;
+  font-family: 'Inter', sans-serif;
   font-weight: bold;
   color: ${props => {
     if (props.isOvertime) return '#ff4444';

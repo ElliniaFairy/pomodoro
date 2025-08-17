@@ -78,7 +78,7 @@ const SpaceButton = styled.button<{
   color: white;
   font-size: 16px;
   font-weight: bold;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
   padding: 15px 25px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -169,7 +169,7 @@ const TimeInput = styled.input`
   border: 2px solid #ffff00;
   border-radius: 8px;
   color: #ffff00;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: bold;
   padding: 10px;
