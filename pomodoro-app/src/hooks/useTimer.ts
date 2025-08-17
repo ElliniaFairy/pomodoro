@@ -2,6 +2,7 @@ import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
 import { saveCurrentSession, loadCurrentSession, saveHistory, loadHistory, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
+import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
 interface AppState {
   currentSession: PomodoroSession | null;
@@ -123,6 +124,7 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
 function useTimer() {
   const [state, dispatch] = useReducer(timerReducer, createInitialState());
   const [, forceUpdate] = useState(0);
+  const prevTimeRemainingRef = useRef<number>(0);
   
   const isRunning = !!state.currentSession;
   
@@ -130,6 +132,11 @@ function useTimer() {
    * Time remaining in milliseconds for current session (can be negative for overtime)
    */
   const timeRemaining = state.currentSession ? state.currentSession.endTime.getTime() - new Date().getTime() : 0;
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   // Update timer every second when session is active
   useEffect(() => {
@@ -141,6 +148,18 @@ function useTimer() {
 
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // Check if timer just hit zero and trigger notification
+  useEffect(() => {
+    const prevTimeRemaining = prevTimeRemainingRef.current;
+    prevTimeRemainingRef.current = timeRemaining;
+
+    // If we crossed from positive to negative (timer just hit zero)
+    if (state.currentSession && prevTimeRemaining > 0 && timeRemaining <= 0) {
+      console.log(`⏰ Timer hit zero for ${state.currentSession.type} session!`);
+      triggerSessionEndAlert(state.currentSession.type);
+    }
+  }, [timeRemaining, state.currentSession]);
 
   // Save current session whenever it changes
   useEffect(() => {
