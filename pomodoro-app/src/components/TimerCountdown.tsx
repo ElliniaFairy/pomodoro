@@ -22,24 +22,15 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const SessionTitle = styled.h2<{ sessionType: 'focus' | 'break' }>`
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: ${props => props.sessionType === 'focus' ? '#22c55e' : '#ff1493'};
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 600;
-`;
-
 const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'break' }>`
-  font-size: 4rem;
+  font-size: 5rem;
   font-family: 'Courier New', monospace;
   font-weight: bold;
   color: ${props => {
     if (props.isOvertime) return '#ff4444';
     return props.sessionType === 'focus' ? '#22c55e' : '#ff1493';
   }};
-  margin: 20px 0;
+  padding: -20px;
   text-shadow: 0 0 10px currentColor;
 `;
 
@@ -52,9 +43,6 @@ const TimerCountdown: React.FC<TimerCountdownProps> = ({
 
   return (
     <Container>
-      <SessionTitle sessionType={sessionType}>
-        {sessionType === 'focus' ? 'Focus Time' : 'Break Time'}
-      </SessionTitle>
       <TimeDisplay isOvertime={isOvertime} sessionType={sessionType}>
         {isOvertime ? '+' : ''}{display}
       </TimeDisplay>

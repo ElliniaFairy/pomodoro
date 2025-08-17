@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useRef } from 'react';
+import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
 
@@ -121,11 +121,25 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
 
 function useTimer() {
   const [state, dispatch] = useReducer(timerReducer, initialState);
+  const [, forceUpdate] = useState(0);
+  
   const isRunning = !!state.currentSession;
+  
   /**
-   * Time remaining in milliseconds for current session
+   * Time remaining in milliseconds for current session (can be negative for overtime)
    */
-  const timeRemaining = state.currentSession ? Math.max(state.currentSession.endTime.getTime() - new Date().getTime(), 0) : 0;
+  const timeRemaining = state.currentSession ? state.currentSession.endTime.getTime() - new Date().getTime() : 0;
+
+  // Update timer every second when session is active
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const interval = setInterval(() => {
+      forceUpdate(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRunning]);
   return {
     currentSession: state.currentSession,
     history: state.history,

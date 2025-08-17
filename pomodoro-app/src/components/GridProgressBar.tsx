@@ -12,9 +12,9 @@ interface GridProgressBarProps {
 
 const Container = styled.div`
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 10px;
+  padding: -40px -40px;
 `;
 
 const Grid = styled.div<{ rows: number; cols: number }>`
@@ -25,7 +25,7 @@ const Grid = styled.div<{ rows: number; cols: number }>`
   background: #1a1a1a;
   padding: 8px;
   border-radius: 8px;
-  aspect-ratio: 2/1;
+  aspect-ratio: 2.5/1;
 `;
 
 const Block = styled.div<{ filled: boolean; sessionType: 'focus' | 'break' }>`
@@ -42,8 +42,8 @@ const GridProgressBar: React.FC<GridProgressBarProps> = ({
   totalDuration,
   elapsed,
   sessionType,
-  rows = 10,
-  cols = 20
+  rows = 20,
+  cols = 50
 }) => {
   const totalBlocks = rows * cols;
   const progressRatio = Math.min(elapsed / totalDuration, 1);
