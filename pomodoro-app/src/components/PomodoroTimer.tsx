@@ -19,6 +19,7 @@ const PomodoroTimer: React.FC = () => {
     adjustTime,
     completeSession,
     removeSession,
+    removeHistorySession,
   } = useTimer();
 
   const handleStartFocus = () => {
@@ -48,6 +49,10 @@ const PomodoroTimer: React.FC = () => {
 
   const handleChecklistCompleted = () => {
     setChecklistCompleted(true);
+  };
+
+  const handleRemoveHistorySession = (sessionId: string) => {
+    removeHistorySession(sessionId);
   };
 
   // Calculate total duration for progress bar
@@ -106,7 +111,10 @@ const PomodoroTimer: React.FC = () => {
         sessionType={currentSession?.type || null}
       />
       
-      <SessionHistory sessions={history} />
+      <SessionHistory 
+        sessions={history} 
+        onRemoveSession={handleRemoveHistorySession}
+      />
     </div>
   );
 };

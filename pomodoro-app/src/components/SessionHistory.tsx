@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import type { PomodoroSession } from '../types/timer';
-import { format, formatDuration, intervalToDuration } from 'date-fns';
+import { format, intervalToDuration } from 'date-fns';
 
 interface SessionHistoryProps {
   sessions: PomodoroSession[];
+  onRemoveSession?: (sessionId: string) => void;
 }
 
 const Container = styled.div`
@@ -41,13 +42,14 @@ const SessionCard = styled.div<{ sessionType: 'focus' | 'break' }>`
   border-radius: 8px;
   padding: 15px;
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto auto;
   gap: 15px;
   align-items: center;
+  position: relative;
 `;
 
 const SessionType = styled.div<{ sessionType: 'focus' | 'break' }>`
-  width: 60px;
+  width: 30px;
   height: 30px;
   background: ${props => props.sessionType === 'focus' ? '#22c55e' : '#ff1493'};
   color: white;
@@ -98,6 +100,42 @@ const EmptyState = styled.div`
   padding: 40px;
 `;
 
+const DeleteButton = styled.button`
+  background: rgba(124, 4, 4, 0.8);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  width: 30px;
+  height: 26px;
+  color:rgb(255, 255, 255);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  opacity: 0.9;
+  transition: all 0.2s ease;
+
+  svg {
+    color: #ef4444;
+  }
+
+  &:hover {
+    opacity: 1;
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+    transform: scale(1.05);
+    
+    svg {
+      color: #ff5555;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background: rgba(239, 68, 68, 0.25);
+  }
+`;
+
 function formatSessionDuration(startTime: Date, endTime: Date): string {
   const duration = intervalToDuration({ start: startTime, end: endTime });
   const hours = duration.hours || 0;
@@ -113,7 +151,7 @@ function formatSessionDuration(startTime: Date, endTime: Date): string {
   }
 }
 
-const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions }) => {
+const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions, onRemoveSession }) => {
   const sortedSessions = [...sessions].sort((a, b) => 
     new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
   );
@@ -151,10 +189,9 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions }) => {
             No missions completed yet. Start your first session! 🚀
           </EmptyState>
         ) : (
-          sortedSessions.slice(0, 10).map((session) => (
+          sortedSessions.slice(0, 30).map((session) => (
             <SessionCard key={session.id} sessionType={session.type}>
               <SessionType sessionType={session.type}>
-                {session.type === 'focus' ? '🎯' : '☕'}
               </SessionType>
               
               <SessionDetails>
@@ -173,6 +210,15 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions }) => {
               <Stats>
                 {format(new Date(session.endTime), 'MMM d')}
               </Stats>
+
+              {onRemoveSession && (
+                <DeleteButton
+                  onClick={() => onRemoveSession(session.id)}
+                  title="Remove this session"
+                >
+                  ❌
+                </DeleteButton>
+              )}
             </SessionCard>
           ))
         )}

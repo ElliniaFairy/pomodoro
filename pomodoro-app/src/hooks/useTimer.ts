@@ -109,6 +109,13 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       };
     }
 
+    case 'REMOVE_HISTORY_SESSION': {
+      return {
+        ...state,
+        history: state.history.filter(session => session.id !== action.sessionId),
+      };
+    }
+
     case 'UPDATE_SETTINGS': {
       return {
         ...state,
@@ -239,6 +246,12 @@ function useTimer() {
     removeSession: () => {
       dispatch({
         type: 'REMOVE_SESSION',
+      });
+    },
+    removeHistorySession: (sessionId: string) => {
+      dispatch({
+        type: 'REMOVE_HISTORY_SESSION',
+        sessionId,
       });
     },
     updateSettings: (settings: Partial<TimerSettings>) => {
