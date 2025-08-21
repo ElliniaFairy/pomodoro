@@ -8,6 +8,7 @@ interface GridProgressBarProps {
   sessionType: 'focus' | 'break';
   rows?: number;
   cols?: number;
+  style?: React.CSSProperties;
 }
 
 const Container = styled.div`
@@ -43,7 +44,8 @@ const GridProgressBar: React.FC<GridProgressBarProps> = ({
   elapsed,
   sessionType,
   rows = 20,
-  cols = 50
+  cols = 50,
+  style
 }) => {
   const totalBlocks = rows * cols;
   const progressRatio = Math.min(elapsed / totalDuration, 1);
@@ -61,7 +63,7 @@ const GridProgressBar: React.FC<GridProgressBarProps> = ({
   const filledIndices = new Set(shuffledBlocks.slice(0, filledBlocks));
 
   return (
-    <Container>
+    <Container style={style}>
       <Grid rows={rows} cols={cols}>
         {Array.from({ length: totalBlocks }, (_, index) => (
           <Block

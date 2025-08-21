@@ -4,8 +4,11 @@ import TimerCountdown from './TimerCountdown';
 import GridProgressBar from './GridProgressBar';
 import SpaceshipControlPanel from './SpaceshipControlPanel';
 import SessionHistory from './SessionHistory';
+import BreakChecklist from './BreakChecklist';
 
 const PomodoroTimer: React.FC = () => {
+  const [checklistCompleted, setChecklistCompleted] = React.useState(false);
+  
   const {
     currentSession,
     history,
@@ -23,6 +26,7 @@ const PomodoroTimer: React.FC = () => {
   };
 
   const handleStartBreak = () => {
+    setChecklistCompleted(false);
     startSession('break');
   };
 
@@ -40,6 +44,10 @@ const PomodoroTimer: React.FC = () => {
 
   const handleAdjustTime = (minutes: number) => {
     adjustTime(minutes);
+  };
+
+  const handleChecklistCompleted = () => {
+    setChecklistCompleted(true);
   };
 
   // Calculate total duration for progress bar
@@ -72,12 +80,18 @@ const PomodoroTimer: React.FC = () => {
             sessionType={currentSession.type}
           />
 
-          <GridProgressBar 
-            sessionId={currentSession.id}
-            totalDuration={getTotalDuration()}
-            elapsed={getElapsed()}
-            sessionType={currentSession.type}
-          />
+          {currentSession.type === 'break' && !checklistCompleted ? (
+            <BreakChecklist 
+              onAllItemsCompleted={handleChecklistCompleted}
+            />
+          ) : (
+            <GridProgressBar 
+              sessionId={currentSession.id}
+              totalDuration={getTotalDuration()}
+              elapsed={getElapsed()}
+              sessionType={currentSession.type}
+            />
+          )}
         </>
       )}
 
@@ -93,15 +107,6 @@ const PomodoroTimer: React.FC = () => {
       />
       
       <SessionHistory sessions={history} />
-      
-      <div style={{ 
-        marginTop: '20px', 
-        textAlign: 'center', 
-        color: '#666', 
-        fontSize: '14px' 
-      }}>
-        ✨ All systems operational - Ready for productivity missions ✨
-      </div>
     </div>
   );
 };
