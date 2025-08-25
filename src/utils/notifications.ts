@@ -38,10 +38,10 @@ export const showSessionEndNotification = (sessionType: 'focus' | 'break'): void
     requireInteraction: true, // Keeps notification visible until user interacts
   });
 
-  // Auto-close after 5 seconds if user doesn't interact
+  // Auto-close after 20 seconds if user doesn't interact
   setTimeout(() => {
     notification.close();
-  }, 5000);
+  }, 20000);
 };
 
 // Play alarm sound when session ends
