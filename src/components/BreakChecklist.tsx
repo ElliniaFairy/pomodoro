@@ -5,7 +5,7 @@ interface BreakChecklistProps {
   style?: React.CSSProperties;
 }
 
-const CHECKLIST_ITEMS = [
+const CHECKLIST_ITEMS_PRIVATE = [
   "把任务结束时还想做的事和还有的心流录入时间表中",
   "将刚才这个番茄学到的东西写到Obsidian中", 
   "添加爱时间中的时间记录",
@@ -14,9 +14,27 @@ const CHECKLIST_ITEMS = [
   "上厕所"
 ];
 
+
+const CHECKLIST_ITEMS_WORK = [
+  "检查下一步的会议，需要时设置闹钟进行nextTick polling",
+  "将刚才这个番茄学到的工作随想和笔记录入Slack中", 
+  "把接下来番茄想做的事录入Google Calendar或ClickUp中",
+  "添加爱时间中的时间记录",
+  "添加Ticktick中的番茄数",
+  "把刚才这个番茄做的事录入Google Calendar中",
+  "上厕所",
+  "饮水机补水"
+];
+
+
 const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, style }) => {
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
   const [isCompleting, setIsCompleting] = useState(false);
+  
+  // Read query parameter to determine mode (default: private)
+  const searchParams = new URLSearchParams(window.location.search);
+  const mode = searchParams.get('mode') || 'private';
+  const currentChecklist = mode === 'work' ? CHECKLIST_ITEMS_WORK : CHECKLIST_ITEMS_PRIVATE;
   
   const handleToggle = (index: number) => {
     const newChecked = new Set(checkedItems);
@@ -27,7 +45,7 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
     }
     setCheckedItems(newChecked);
     
-    if (newChecked.size === CHECKLIST_ITEMS.length) {
+    if (newChecked.size === currentChecklist.length) {
       setIsCompleting(true);
       setTimeout(() => {
         onAllItemsCompleted();
@@ -50,7 +68,7 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
       transition: isCompleting ? 'opacity 2s ease-in-out 0.5s' : 'none',
       ...style
     }}>
-      {CHECKLIST_ITEMS.map((item, index) => (
+      {currentChecklist.map((item, index) => (
         <div
           key={index}
           onClick={() => handleToggle(index)}
