@@ -229,7 +229,7 @@ function useTimer() {
             breakDuration = actualFocusDuration * state.settings.breakRatio;
           } else if (state.history.length > 0) {
             // Not in focus session - use last completed focus session duration
-            const lastFocusSession = [...state.history].reverse().find(session => session.type === 'focus');
+            const lastFocusSession = state.history.find(session => session.type === 'focus');
             if (lastFocusSession) {
               const actualFocusDuration = (new Date(lastFocusSession.endTime).getTime() - new Date(lastFocusSession.startTime).getTime()) / (1000 * 60); // in minutes
               breakDuration = actualFocusDuration * state.settings.breakRatio;
