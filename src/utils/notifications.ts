@@ -86,9 +86,7 @@ export const playAlarmSound = (sessionType: 'focus' | 'break'): void => {
 };
 
 // Main function to trigger all notifications
-export const triggerSessionEndAlert = (sessionType: 'focus' | 'break'): void => {
-  console.log(`🚀 Session ended: ${sessionType}`);
-  
+export const triggerSessionEndAlert = (sessionType: 'focus' | 'break'): void => {  
   // Play sound
   try {
     playAlarmSound(sessionType);

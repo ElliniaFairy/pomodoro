@@ -163,7 +163,6 @@ function useTimer() {
 
     // If we crossed from positive to negative (timer just hit zero)
     if (state.currentSession && prevTimeRemaining > 0 && timeRemaining <= 0) {
-      console.log(`⏰ Timer hit zero for ${state.currentSession.type} session!`);
       triggerSessionEndAlert(state.currentSession.type);
     }
   }, [timeRemaining, state.currentSession]);
