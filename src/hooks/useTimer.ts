@@ -44,7 +44,7 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
     case 'START_SESSION': {
       // First, complete any current session with new session's start time
       const updatedHistory = state.currentSession 
-        ? [...state.history, { ...state.currentSession, endTime: action.startTime }]
+        ? [{ ...state.currentSession, endTime: action.startTime }, ...state.history]
         : state.history;
       
       // Then create new session
@@ -99,7 +99,7 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       return {
         ...state,
         currentSession: null,
-        history: [...state.history, completedSession],
+        history: [completedSession, ...state.history],
       };
     }
 
@@ -267,6 +267,11 @@ function useTimer() {
       });
     },
     removeHistorySession: (sessionId: string) => {
+      // Add to deletion log before removing from React state
+      const deletionLog = JSON.parse(localStorage.getItem('pomodoro_deleted_sessions') || '[]');
+      deletionLog.push(sessionId);
+      localStorage.setItem('pomodoro_deleted_sessions', JSON.stringify(deletionLog));
+      
       dispatch({
         type: 'REMOVE_HISTORY_SESSION',
         sessionId,
