@@ -69,6 +69,13 @@ I want a pomodoro timer which allow to:
 - **Web Audio API** - No external sound files needed
 - **Smart Detection** - Only triggers when timer crosses zero
 
+### ☁️ Cloud Sync System
+- **GitHub Gist Integration** - Sync session history between PCs
+- **Smart Merge Logic** - Handles conflicts between devices intelligently
+- **Offline-First Design** - Works without internet, syncs when available
+- **Manual Configuration** - Simple localStorage setup for GitHub tokens
+- **Debounced Saving** - Efficient API usage with 800ms delays
+
 ### 🧠 Smart Logic
 - **State Management** - useReducer pattern with clean actions
 - **Automatic Saving** - All state changes instantly persisted
@@ -125,6 +132,14 @@ src/
 - [ ] **Task Description Recording** - What did you work on?
 - [ ] **Task Categories** - Organize work by project/type
 - [ ] **Session Planning** - Pre-plan what you'll focus on
+
+### ☁️ Cloud Sync Enhancements
+- [ ] **Current Session Sync** - Sync active/running sessions between PCs
+- [ ] **Sync Status UI** - Visual indicators for sync state and last sync time
+- [ ] **Conflict Resolution UI** - Handle merge conflicts with user choice
+- [ ] **Multiple Backend Support** - Support for other storage providers
+- [ ] **Data Retention Policy** - Keep only recent 15 days of sessions and deletion records
+- [ ] **Sync Performance** - Compress sync data, pagination for large histories
 
 ### ⚙️ Settings & Customization
 - [ ] **Settings Panel** - Configure default times, sounds, notifications

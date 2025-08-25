@@ -1,7 +1,8 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
-import { saveCurrentSession, loadCurrentSession, saveHistory, loadHistory, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
+import { saveCurrentSession, loadCurrentSession, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
+import { saveHistoryWithSync, initializeHistoryWithSync, removeSessionWithSync } from '../utils/syncIntegration';
 import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
 interface AppState {
@@ -29,7 +30,7 @@ const defaultProgress: UserProgress = {
 
 const createInitialState = (): AppState => ({
   currentSession: loadCurrentSession(),
-  history: loadHistory(),
+  history: [], // Will be initialized async
   settings: loadSettings() || defaultSettings,
   progress: loadProgress() || defaultProgress,
 });
@@ -123,6 +124,13 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       };
     }
 
+    case 'INITIALIZE_HISTORY': {
+      return {
+        ...state,
+        history: action.history,
+      };
+    }
+
     default:
       return state;
   }
@@ -139,6 +147,15 @@ function useTimer() {
    * Time remaining in milliseconds for current session (can be negative for overtime)
    */
   const timeRemaining = state.currentSession ? state.currentSession.endTime.getTime() - new Date().getTime() : 0;
+
+  // Initialize history with sync on mount
+  useEffect(() => {
+    const initHistory = async () => {
+      const history = await initializeHistoryWithSync();
+      dispatch({ type: 'INITIALIZE_HISTORY', history });
+    };
+    initHistory();
+  }, []);
 
   // Request notification permission on mount
   useEffect(() => {
@@ -172,9 +189,11 @@ function useTimer() {
     saveCurrentSession(state.currentSession);
   }, [state.currentSession]);
 
-  // Save history whenever it changes
+  // Save history whenever it changes (with sync)
   useEffect(() => {
-    saveHistory(state.history);
+    if (state.history.length > 0) { // Only sync if we have history
+      saveHistoryWithSync(state.history);
+    }
   }, [state.history]);
 
   // Save settings whenever they change
