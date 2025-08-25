@@ -35,7 +35,7 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
   const searchParams = new URLSearchParams(window.location.search);
   const mode = searchParams.get('mode') || 'private';
   const currentChecklist = mode === 'work' ? CHECKLIST_ITEMS_WORK : CHECKLIST_ITEMS_PRIVATE;
-  
+
   const handleToggle = (index: number) => {
     const newChecked = new Set(checkedItems);
     if (newChecked.has(index)) {
@@ -53,17 +53,22 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
     }
   };
 
+  // Calculate dynamic grid dimensions
+  const itemCount = currentChecklist.length;
+  const columns = 2;
+  const rows = Math.ceil(itemCount / columns);
+
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gridTemplateRows: 'repeat(3, 1fr)',
+      gridTemplateColumns: `repeat(${columns}, 1fr)`,
+      gridTemplateRows: `repeat(${rows}, 1fr)`,
       rowGap: '20px',
       columnGap: '40px',
       maxWidth: '800px',
       margin: '0 auto',
       padding: '20px',
-      height: '300px',
+      height: `${rows * 100}px`,
       opacity: isCompleting ? 0 : 1,
       transition: isCompleting ? 'opacity 2s ease-in-out 0.5s' : 'none',
       ...style
