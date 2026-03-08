@@ -4,6 +4,7 @@ import styled from 'styled-components';
 interface TimerCountdownProps {
   timeRemaining: number; // in milliseconds
   sessionType: 'focus' | 'break';
+  onClick?: () => void;
 }
 
 function formatTime(milliseconds: number): { minutes: number; seconds: number; display: string } {
@@ -34,15 +35,17 @@ const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'br
   text-shadow: 0 0 10px currentColor;
 `;
 
+/** The pomodoro timer display. */
 const TimerCountdown: React.FC<TimerCountdownProps> = ({
   timeRemaining,
-  sessionType
+  sessionType,
+  onClick
 }) => {
   const { display } = formatTime(timeRemaining);
   const isOvertime = timeRemaining < 0;
 
   return (
-    <Container>
+    <Container onClick={onClick}>
       <TimeDisplay isOvertime={isOvertime} sessionType={sessionType}>
         {isOvertime ? '+' : ''}{display}
       </TimeDisplay>

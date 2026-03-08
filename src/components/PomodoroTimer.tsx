@@ -67,6 +67,10 @@ const PomodoroTimer: React.FC = () => {
     return Math.max(0, now.getTime() - currentSession.startTime.getTime());
   };
 
+  const handleAddDescription = () => {
+    // Save the task description in the currentSession.
+  }
+
   return (
     <div style={{ 
       padding: '20px', 
@@ -83,6 +87,7 @@ const PomodoroTimer: React.FC = () => {
           <TimerCountdown 
             timeRemaining={timeRemaining}
             sessionType={currentSession.type}
+            onClick={handleAddDescription}
           />
 
           {currentSession.type === 'break' && !checklistCompleted ? (
