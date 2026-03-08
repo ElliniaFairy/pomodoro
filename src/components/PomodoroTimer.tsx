@@ -6,6 +6,7 @@ import SpaceshipControlPanel from './SpaceshipControlPanel';
 import SessionHistory from './SessionHistory';
 import BreakChecklist from './BreakChecklist';
 import AddDescriptionModal from './AddDescriptionModal';
+import TaskDescriptionDisplay from './TaskDescriptionDisplay';
 
 const PomodoroTimer: React.FC = () => {
   const [checklistCompleted, setChecklistCompleted] = React.useState(false);
@@ -90,7 +91,6 @@ const PomodoroTimer: React.FC = () => {
           <TimerCountdown 
             timeRemaining={timeRemaining}
             sessionType={currentSession.type}
-            onClick={handleOpenAddDescriptionModal}
           />
 
           {isDescriptionModalOpened && 
@@ -101,9 +101,10 @@ const PomodoroTimer: React.FC = () => {
             />)
           }
 
-          {currentSession.taskDescription && !isDescriptionModalOpened &&
-            (<span id="task-description">{currentSession.taskDescription}</span>)
-          }
+          <TaskDescriptionDisplay
+            description={currentSession.taskDescription}
+            onClick={handleOpenAddDescriptionModal}
+          />
 
           {currentSession.type === 'break' && !checklistCompleted ? (
             <BreakChecklist 
