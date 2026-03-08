@@ -5,9 +5,11 @@ import GridProgressBar from './GridProgressBar';
 import SpaceshipControlPanel from './SpaceshipControlPanel';
 import SessionHistory from './SessionHistory';
 import BreakChecklist from './BreakChecklist';
+import AddDescriptionModal from './AddDescriptionModal';
 
 const PomodoroTimer: React.FC = () => {
   const [checklistCompleted, setChecklistCompleted] = React.useState(false);
+  const [isDescriptionModalOpened, setIsDescriptionModalOpened] = React.useState(false)
   
   const {
     currentSession,
@@ -17,6 +19,7 @@ const PomodoroTimer: React.FC = () => {
     timeRemaining,
     startSession,
     adjustTime,
+    addDescription,
     completeSession,
     removeSession,
     removeHistorySession,
@@ -67,8 +70,8 @@ const PomodoroTimer: React.FC = () => {
     return Math.max(0, now.getTime() - currentSession.startTime.getTime());
   };
 
-  const handleAddDescription = () => {
-    // Save the task description in the currentSession.
+  const handleOpenAddDescriptionModal = () => {
+    setIsDescriptionModalOpened(true)
   }
 
   return (
@@ -87,8 +90,20 @@ const PomodoroTimer: React.FC = () => {
           <TimerCountdown 
             timeRemaining={timeRemaining}
             sessionType={currentSession.type}
-            onClick={handleAddDescription}
+            onClick={handleOpenAddDescriptionModal}
           />
+
+          {isDescriptionModalOpened && 
+            (<AddDescriptionModal
+              originalDescription={currentSession.taskDescription}
+              addDescription={addDescription}
+              onClose={() => {setIsDescriptionModalOpened(false)}}
+            />)
+          }
+
+          {currentSession.taskDescription && !isDescriptionModalOpened &&
+            (<span id="task-description">{currentSession.taskDescription}</span>)
+          }
 
           {currentSession.type === 'break' && !checklistCompleted ? (
             <BreakChecklist 

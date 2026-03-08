@@ -63,6 +63,17 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       };
     }
 
+    case 'ADD_DESCRIPTION': {
+      if (!state.currentSession) return state;
+      return {
+        ...state,
+        currentSession: {
+          ...state.currentSession,
+          taskDescription: action.description
+        }
+      }
+    }
+
     case 'ADJUST_TIME': {
       if (!state.currentSession || !state.currentSession.endTime) return state;
       
@@ -249,6 +260,12 @@ function useTimer() {
         endTime,
         taskDescription,
       });
+    },
+    addDescription: (description: string) => {
+      dispatch({
+        type: 'ADD_DESCRIPTION',
+        description
+      })
     },
     adjustTime: (durationChange: number) => {
       dispatch({
