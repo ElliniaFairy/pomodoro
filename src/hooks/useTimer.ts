@@ -2,7 +2,7 @@ import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
 import { saveCurrentSession, loadCurrentSession, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
-import { saveHistoryWithSync, initializeHistoryWithSync, removeSessionWithSync } from '../utils/syncIntegration';
+import { saveSession, initializeHistoryWithSync, removeSession as removeRemoteSession } from '../utils/syncIntegration';
 import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
 interface AppState {
@@ -101,16 +101,10 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
 
     case 'COMPLETE_SESSION': {
       if (!state.currentSession) return state;
-      
-      const completedSession = {
-        ...state.currentSession,
-        endTime: new Date(), // End at current time
-      };
-      
       return {
         ...state,
         currentSession: null,
-        history: [completedSession, ...state.history],
+        history: [action.session, ...state.history],
       };
     }
 
@@ -200,13 +194,6 @@ function useTimer() {
     saveCurrentSession(state.currentSession);
   }, [state.currentSession]);
 
-  // Save history whenever it changes (with sync)
-  useEffect(() => {
-    if (state.history.length > 0) { // Only sync if we have history
-      saveHistoryWithSync(state.history);
-    }
-  }, [state.history]);
-
   // Save settings whenever they change
   useEffect(() => {
     saveSettings(state.settings);
@@ -274,8 +261,17 @@ function useTimer() {
       });
     },
     completeSession: () => {
+      if (!state.currentSession) return;
+
+      const completedSession = {
+        ...state.currentSession,
+        endTime: new Date(),
+      };
+
+      saveSession(completedSession);
       dispatch({
         type: 'COMPLETE_SESSION',
+        session: completedSession,
       });
     },
     removeSession: () => {
@@ -284,10 +280,7 @@ function useTimer() {
       });
     },
     removeHistorySession: (sessionId: string) => {
-      // Add to deletion log before removing from React state
-      const deletionLog = JSON.parse(localStorage.getItem('pomodoro_deleted_sessions') || '[]');
-      deletionLog.push(sessionId);
-      localStorage.setItem('pomodoro_deleted_sessions', JSON.stringify(deletionLog));
+      removeRemoteSession(sessionId);
       
       dispatch({
         type: 'REMOVE_HISTORY_SESSION',

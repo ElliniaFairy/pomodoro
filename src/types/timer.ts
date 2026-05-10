@@ -29,6 +29,6 @@ export type TimerAction =
   | { type: 'REMOVE_HISTORY_SESSION'; sessionId: string } // removes specific session from history
   | { type: 'ADD_DESCRIPTION'; description: string } // adds task description for the current session
   | { type: 'ADJUST_TIME'; durationChange: number } // +3 or -5 minutes
-  | { type: 'COMPLETE_SESSION' } // finishes session, gets recorded
+  | { type: 'COMPLETE_SESSION'; session: PomodoroSession } // finishes session, gets recorded
   | { type: 'UPDATE_SETTINGS'; settings: Partial<TimerSettings> }
   | { type: 'INITIALIZE_HISTORY'; history: PomodoroSession[] };
