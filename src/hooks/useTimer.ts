@@ -42,9 +42,8 @@ function generateId(): string {
 function timerReducer(state: AppState, action: TimerAction): AppState {
   switch (action.type) {
     case 'START_SESSION': {
-      // First, complete any current session with new session's start time
-      const updatedHistory = state.currentSession 
-        ? [{ ...state.currentSession, endTime: action.startTime }, ...state.history]
+      const updatedHistory = action.completedSession
+        ? [action.completedSession, ...state.history]
         : state.history;
       
       // Then create new session
@@ -213,6 +212,12 @@ function useTimer() {
     startSession: (sessionType: 'focus' | 'break', options?: { startTime?: Date, endTime?: Date, duration?: number, taskDescription?: string }) => {
       let { startTime, endTime, taskDescription } = options ?? {};
       startTime = startTime || new Date();
+      const completedSession = state.currentSession
+        ? { ...state.currentSession, endTime: startTime }
+        : undefined;
+      if (completedSession) {
+        saveSession(completedSession);
+      }
       
       if (!endTime && !options?.duration) {
         if (sessionType === 'focus') {
@@ -246,6 +251,7 @@ function useTimer() {
         startTime,
         endTime,
         taskDescription,
+        completedSession,
       });
     },
     addDescription: (description: string) => {

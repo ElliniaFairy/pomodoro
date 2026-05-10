@@ -24,7 +24,7 @@ export interface UserProgress {
 }
 
 export type TimerAction = 
-  | { type: 'START_SESSION'; sessionType: 'focus' | 'break'; startTime: Date; endTime: Date; taskDescription?: string }
+  | { type: 'START_SESSION'; sessionType: 'focus' | 'break'; startTime: Date; endTime: Date; taskDescription?: string; completedSession?: PomodoroSession }
   | { type: 'REMOVE_SESSION' } // cancels current session, no recording
   | { type: 'REMOVE_HISTORY_SESSION'; sessionId: string } // removes specific session from history
   | { type: 'ADD_DESCRIPTION'; description: string } // adds task description for the current session
