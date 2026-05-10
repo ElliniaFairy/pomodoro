@@ -1,4 +1,4 @@
-import { tursoOperations } from "../src/services/turso";
+import { tursoOperations } from "../src/services/turso/index.js";
 
 export default {
   async fetch(request: Request) {

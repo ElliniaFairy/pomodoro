@@ -1,6 +1,6 @@
 import type { PomodoroSession } from "../../types/timer";
-import { getDatabase } from "./initialization";
-import { parseRawPomodoroSessionDBEntries } from "./parse";
+import { getDatabase } from "./initialization.js";
+import { parseRawPomodoroSessionDBEntries } from "./parse.js";
 
 const db = getDatabase();
 async function getLatestNSessions(n: number): Promise<PomodoroSession[]> {
