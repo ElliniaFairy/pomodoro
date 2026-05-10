@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tursodatabase/database": "^0.5.3",
+    "@tursodatabase/sync": "^0.5.3",
     "@types/styled-components": "^5.1.34",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.539.0",
