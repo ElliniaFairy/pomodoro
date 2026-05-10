@@ -35,34 +35,6 @@ export const loadCurrentSession = (): PomodoroSession | null => {
   }
 };
 
-// Session history storage
-export const saveHistory = (history: PomodoroSession[]): void => {
-  try {
-    const serialized = JSON.stringify(history);
-    localStorage.setItem(STORAGE_KEYS.HISTORY, serialized);
-  } catch (error) {
-    console.error('Failed to save session history:', error);
-  }
-};
-
-export const loadHistory = (): PomodoroSession[] => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEYS.HISTORY);
-    if (!stored) return [];
-    
-    const parsed = JSON.parse(stored);
-    // Convert date strings back to Date objects
-    return parsed.map((session: any) => ({
-      ...session,
-      startTime: new Date(session.startTime),
-      endTime: new Date(session.endTime)
-    }));
-  } catch (error) {
-    console.error('Failed to load session history:', error);
-    return [];
-  }
-};
-
 // Settings storage
 export const saveSettings = (settings: TimerSettings): void => {
   try {
