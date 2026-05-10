@@ -19,10 +19,16 @@ async function updateSession(session: PomodoroSession) {
     return query.run([session.type, session.startTime.toISOString(), session.endTime.toISOString(), session.taskDescription ?? null, session.id]);
 }
 
+async function deleteSession(id: string) {
+    const query = await db.prepare("DELETE FROM pomodoro_entries WHERE id = ?");
+    return query.run([id]);
+}
+
 const tursoOperations = {
     getLatestNSessions,
     insertSession,
     updateSession,
+    deleteSession,
 };
 
 export { tursoOperations };
