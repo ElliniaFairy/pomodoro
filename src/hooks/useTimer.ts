@@ -141,6 +141,7 @@ function useTimer() {
   const [state, dispatch] = useReducer(timerReducer, createInitialState());
   const [, forceUpdate] = useState(0);
   const prevTimeRemainingRef = useRef<number>(0);
+  const currentSessionSaveInFlightRef = useRef(0);
   
   const isRunning = !!state.currentSession;
   
@@ -285,13 +286,18 @@ function useTimer() {
       const endTime = currentEndTime > now
         ? addMinutes(currentEndTime, durationChange)
         : addMinutes(now, Math.max(durationChange, 1));
+      currentSessionSaveInFlightRef.current += 1;
       saveRemoteCurrentSession({
         ...state.currentSession,
         endTime,
       }).then((savedSession) => {
+        currentSessionSaveInFlightRef.current -= 1;
         if (!savedSession) return;
-        dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+        if (currentSessionSaveInFlightRef.current === 0) {
+          dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+        }
       }).catch((error) => {
+        currentSessionSaveInFlightRef.current -= 1;
         console.warn('Failed to save current session remotely:', error);
       });
       dispatch({
