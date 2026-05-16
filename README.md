@@ -10,7 +10,6 @@
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
 [![Turso](https://img.shields.io/badge/Turso-Cloud_Sync-4FF8D2?style=flat-square&logo=turso&logoColor=black)](https://turso.tech/)
 
-</div>
 
 | Feature | Description |
 |---------|-------------|
@@ -22,6 +21,13 @@
 | **Task Descriptions** | Tag each session with what you worked on. Your log becomes a journal. |
 | **Spaceship UI** | Dark cockpit aesthetic with a defragmenter-style progress bar. Not a kitchen timer. |
 | **Smart Notifications** | Descending melody when focus ends, ascending when break ends. Web Audio API, no files. |
+
+<br>
+
+<img height="700" alt="Mobile pomodoro" src="https://github.com/user-attachments/assets/bbb5b617-e705-4c78-b476-20ef210d8bc1" />
+<img height="700" alt="Web Pomodoro" src="https://github.com/user-attachments/assets/affeabeb-168a-4125-a65e-429025d00700" />
+
+</div>
 
 ---
 
