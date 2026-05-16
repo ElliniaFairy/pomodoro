@@ -1,7 +1,7 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
-import { saveSettings, loadSettings } from '../utils/storage';
+import { saveSettings, loadSettings } from '../utils/localStorage';
 import { saveSession, initializeHistoryWithSync, removeSession as removeRemoteSession, initializeCurrentSessionWithSync, saveCurrentSession as saveRemoteCurrentSession, removeCurrentSession as removeRemoteCurrentSession } from '../utils/syncIntegration';
 import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
