@@ -82,3 +82,8 @@ When focus ends, the melody descends: C6, G5, E5, C5 — calming, telling you to
 - Experience and leveling system — XP for completed sessions, streak bonuses, daily-first bonuses
 - Achievement system — milestones and rewards for consistency
 - Dashboard — charts, trends, and deeper statistics over time
+
+
+## License
+
+[Apache 2.0](./LICENSE)
