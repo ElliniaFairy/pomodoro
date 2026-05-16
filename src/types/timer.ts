@@ -4,6 +4,7 @@ export interface PomodoroSession {
   startTime: Date;
   endTime: Date;
   taskDescription?: string;
+  updatedAt?: Date;
 }
 
 export interface TimerSettings {
@@ -24,11 +25,12 @@ export interface UserProgress {
 }
 
 export type TimerAction = 
-  | { type: 'START_SESSION'; sessionType: 'focus' | 'break'; startTime: Date; endTime: Date; taskDescription?: string; completedSession?: PomodoroSession }
+  | { type: 'START_SESSION'; session: PomodoroSession; completedSession?: PomodoroSession }
   | { type: 'REMOVE_SESSION' } // cancels current session, no recording
   | { type: 'REMOVE_HISTORY_SESSION'; sessionId: string } // removes specific session from history
   | { type: 'ADD_DESCRIPTION'; description: string } // adds task description for the current session
   | { type: 'ADJUST_TIME'; durationChange: number } // +3 or -5 minutes
   | { type: 'COMPLETE_SESSION'; session: PomodoroSession } // finishes session, gets recorded
   | { type: 'UPDATE_SETTINGS'; settings: Partial<TimerSettings> }
+  | { type: 'INITIALIZE_CURRENT_SESSION'; session: PomodoroSession | null }
   | { type: 'INITIALIZE_HISTORY'; history: PomodoroSession[] };

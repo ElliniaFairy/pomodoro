@@ -1,8 +1,8 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
-import { saveCurrentSession, loadCurrentSession, saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
-import { saveSession, initializeHistoryWithSync, removeSession as removeRemoteSession } from '../utils/syncIntegration';
+import { saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
+import { saveSession, initializeHistoryWithSync, removeSession as removeRemoteSession, initializeCurrentSessionWithSync, saveCurrentSession as saveRemoteCurrentSession, removeCurrentSession as removeRemoteCurrentSession } from '../utils/syncIntegration';
 import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
 interface AppState {
@@ -29,7 +29,7 @@ const defaultProgress: UserProgress = {
 };
 
 const createInitialState = (): AppState => ({
-  currentSession: loadCurrentSession(),
+  currentSession: null,
   history: [], // Will be initialized async
   settings: loadSettings() || defaultSettings,
   progress: loadProgress() || defaultProgress,
@@ -45,19 +45,10 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       const updatedHistory = action.completedSession
         ? [action.completedSession, ...state.history]
         : state.history;
-      
-      // Then create new session
-      const newSession: PomodoroSession = {
-        id: generateId(),
-        type: action.sessionType,
-        startTime: action.startTime,
-        endTime: action.endTime,
-        taskDescription: action.taskDescription,
-      };
 
       return {
         ...state,
-        currentSession: newSession,
+        currentSession: action.session,
         history: updatedHistory,
       };
     }
@@ -128,6 +119,13 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
       };
     }
 
+    case 'INITIALIZE_CURRENT_SESSION': {
+      return {
+        ...state,
+        currentSession: action.session,
+      };
+    }
+
     case 'INITIALIZE_HISTORY': {
       return {
         ...state,
@@ -154,11 +152,15 @@ function useTimer() {
 
   // Initialize history with sync on mount
   useEffect(() => {
-    const initHistory = async () => {
-      const history = await initializeHistoryWithSync();
+    const initRemoteState = async () => {
+      const [history, currentSession] = await Promise.all([
+        initializeHistoryWithSync(),
+        initializeCurrentSessionWithSync(),
+      ]);
       dispatch({ type: 'INITIALIZE_HISTORY', history });
+      dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: currentSession });
     };
-    initHistory();
+    initRemoteState();
   }, []);
 
   // Request notification permission on mount
@@ -187,11 +189,6 @@ function useTimer() {
       triggerSessionEndAlert(state.currentSession.type);
     }
   }, [timeRemaining, state.currentSession]);
-
-  // Save current session whenever it changes
-  useEffect(() => {
-    saveCurrentSession(state.currentSession);
-  }, [state.currentSession]);
 
   // Save settings whenever they change
   useEffect(() => {
@@ -244,23 +241,65 @@ function useTimer() {
       } else if (!endTime) {
         endTime = addMinutes(startTime, options?.duration ?? 0);
       }
-      
-      dispatch({
-        type: 'START_SESSION',
-        sessionType,
+
+      const newSession: PomodoroSession = {
+        id: generateId(),
+        type: sessionType,
         startTime,
         endTime,
         taskDescription,
+      };
+
+      saveRemoteCurrentSession(newSession)
+        .then((savedSession) => {
+          if (!savedSession) return;
+          dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+        })
+        .catch((error) => {
+          console.warn('Failed to save current session remotely:', error);
+        });
+      
+      dispatch({
+        type: 'START_SESSION',
+        session: newSession,
         completedSession,
       });
     },
     addDescription: (description: string) => {
+      if (!state.currentSession) return;
+      const updatedSession = {
+        ...state.currentSession,
+        taskDescription: description,
+      };
+      saveRemoteCurrentSession(updatedSession)
+        .then((savedSession) => {
+          if (!savedSession) return;
+          dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+        })
+        .catch((error) => {
+          console.warn('Failed to save current session remotely:', error);
+        });
       dispatch({
         type: 'ADD_DESCRIPTION',
         description
       })
     },
     adjustTime: (durationChange: number) => {
+      if (!state.currentSession || !state.currentSession.endTime) return;
+      const now = new Date();
+      const currentEndTime = state.currentSession.endTime;
+      const endTime = currentEndTime > now
+        ? addMinutes(currentEndTime, durationChange)
+        : addMinutes(now, Math.max(durationChange, 1));
+      saveRemoteCurrentSession({
+        ...state.currentSession,
+        endTime,
+      }).then((savedSession) => {
+        if (!savedSession) return;
+        dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+      }).catch((error) => {
+        console.warn('Failed to save current session remotely:', error);
+      });
       dispatch({
         type: 'ADJUST_TIME',
         durationChange,
@@ -275,12 +314,18 @@ function useTimer() {
       };
 
       saveSession(completedSession);
+      removeRemoteCurrentSession().catch((error) => {
+        console.warn('Failed to delete current session remotely:', error);
+      });
       dispatch({
         type: 'COMPLETE_SESSION',
         session: completedSession,
       });
     },
     removeSession: () => {
+      removeRemoteCurrentSession().catch((error) => {
+        console.warn('Failed to delete current session remotely:', error);
+      });
       dispatch({
         type: 'REMOVE_SESSION',
       });
