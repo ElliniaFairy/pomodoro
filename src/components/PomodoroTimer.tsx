@@ -321,16 +321,18 @@ const PomodoroTimer: React.FC = () => {
             )}
           </MobileRetroSection>
 
-          <SpaceshipControlPanel
-            onStartFocus={handleStartFocus}
-            onStartBreak={handleStartBreak}
-            onComplete={handleComplete}
-            onAbort={handleAbort}
-            onRetroactiveStart={handleRetroactiveStart}
-            onAdjustTime={handleAdjustTime}
-            isRunning={isRunning}
-            sessionType={currentSession?.type || null}
-          />
+          {!showMobileRetro && (
+            <SpaceshipControlPanel
+              onStartFocus={handleStartFocus}
+              onStartBreak={handleStartBreak}
+              onComplete={handleComplete}
+              onAbort={handleAbort}
+              onRetroactiveStart={handleRetroactiveStart}
+              onAdjustTime={handleAdjustTime}
+              isRunning={isRunning}
+              sessionType={currentSession?.type || null}
+            />
+          )}
         </BottomDock>
       )}
     </PageContainer>
