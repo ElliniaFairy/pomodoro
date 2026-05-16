@@ -1,7 +1,29 @@
+<div align="center">
+
 # Pomodoro
 
-> A timer that respects how you actually work.
+**A timer that respects how you actually work.**
 
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Turso](https://img.shields.io/badge/Turso-Cloud_Sync-4FF8D2?style=flat-square&logo=turso&logoColor=black)](https://turso.tech/)
+
+</div>
+
+| Feature | Description |
+|---------|-------------|
+| **Retroactive Start** | Forgot to press Start 20 minutes ago? Type the real start time and the timer rewinds. |
+| **Flexible Break** | Break = 1/3 of actual focus time. No more fixed 5-minute pauses. |
+| **Time Adjustment** | +1m, +3m, +10m — extend or shrink sessions anytime, even after the timer hits zero. |
+| **Cloud Sync** | Turso Cloud keeps your history across work, home, and mobile. |
+| **Break Checklist** | A checklist appears between sessions so you can let go of loose threads before resting. |
+| **Task Descriptions** | Tag each session with what you worked on. Your log becomes a journal. |
+| **Spaceship UI** | Dark cockpit aesthetic with a defragmenter-style progress bar. Not a kitchen timer. |
+| **Smart Notifications** | Descending melody when focus ends, ascending when break ends. Web Audio API, no files. |
+
+---
 
 ## Why This Exists
 
