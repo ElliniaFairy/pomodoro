@@ -35,6 +35,9 @@ const ScrollArea = styled.div`
     overflow-y: auto;
     padding: 10px 10px 0;
     -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 `;
 
@@ -45,6 +48,18 @@ const BottomDock = styled.div`
     padding-bottom: max(20px, calc(env(safe-area-inset-bottom) + 10px));
     border-top: 1px solid rgba(0, 255, 255, 0.15);
     background: #0f0f0f;
+  }
+`;
+
+const HistoryGrow = styled.div`
+  @media (max-width: 640px) {
+    margin-top: auto;
+    max-height: 60vh;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
   }
 `;
 
@@ -271,10 +286,12 @@ const PomodoroTimer: React.FC = () => {
           />
         )}
 
-        <SessionHistory
-          sessions={history}
-          onRemoveSession={handleRemoveHistorySession}
-        />
+        <HistoryGrow>
+          <SessionHistory
+            sessions={history}
+            onRemoveSession={handleRemoveHistorySession}
+          />
+        </HistoryGrow>
       </ScrollArea>
 
       {isMobile && (

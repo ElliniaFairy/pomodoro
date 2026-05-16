@@ -19,8 +19,15 @@ const Container = styled.div`
 
   @media (max-width: 640px) {
     padding: 12px;
-    margin: 12px auto;
+    margin: 0;
     border-radius: 12px;
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 `;
 
@@ -49,7 +56,9 @@ const SessionList = styled.div`
 
   @media (max-width: 640px) {
     gap: 6px;
-    max-height: 220px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
 `;
 
