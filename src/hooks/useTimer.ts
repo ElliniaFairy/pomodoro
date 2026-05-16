@@ -1,7 +1,7 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
 import type { PomodoroSession, TimerSettings, UserProgress, TimerAction } from '../types/timer';
 import { addMinutes } from 'date-fns';
-import { saveSettings, loadSettings, saveProgress, loadProgress } from '../utils/storage';
+import { saveSettings, loadSettings } from '../utils/storage';
 import { saveSession, initializeHistoryWithSync, removeSession as removeRemoteSession, initializeCurrentSessionWithSync, saveCurrentSession as saveRemoteCurrentSession, removeCurrentSession as removeRemoteCurrentSession } from '../utils/syncIntegration';
 import { triggerSessionEndAlert, requestNotificationPermission } from '../utils/notifications';
 
@@ -9,7 +9,6 @@ interface AppState {
   currentSession: PomodoroSession | null;
   history: PomodoroSession[];
   settings: TimerSettings;
-  progress: UserProgress;
 }
 
 const defaultSettings: TimerSettings = {
@@ -18,6 +17,7 @@ const defaultSettings: TimerSettings = {
   minimumSessionDuration: 2,
 };
 
+// Reserved for future use
 const defaultProgress: UserProgress = {
   level: 1,
   experience: 0,
@@ -32,7 +32,6 @@ const createInitialState = (): AppState => ({
   currentSession: null,
   history: [], // Will be initialized async
   settings: loadSettings() || defaultSettings,
-  progress: loadProgress() || defaultProgress,
 });
 
 function generateId(): string {
@@ -195,15 +194,10 @@ function useTimer() {
     saveSettings(state.settings);
   }, [state.settings]);
 
-  // Save progress whenever it changes
-  useEffect(() => {
-    saveProgress(state.progress);
-  }, [state.progress]);
   return {
     currentSession: state.currentSession,
     history: state.history,
     settings: state.settings,
-    progress: state.progress,
     isRunning,
     timeRemaining,
     startSession: (sessionType: 'focus' | 'break', options?: { startTime?: Date, endTime?: Date, duration?: number, taskDescription?: string }) => {
