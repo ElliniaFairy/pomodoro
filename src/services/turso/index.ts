@@ -1,2 +1,1 @@
-import { tursoOperations } from "./operation.js";
-export { tursoOperations };
+export { tursoOperations } from "./operation.js";
