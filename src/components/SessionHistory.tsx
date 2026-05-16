@@ -16,6 +16,12 @@ const Container = styled.div`
   margin: 20px auto;
   max-width: 800px;
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+
+  @media (max-width: 640px) {
+    padding: 12px;
+    margin: 12px auto;
+    border-radius: 12px;
+  }
 `;
 
 const Title = styled.h2`
@@ -26,6 +32,12 @@ const Title = styled.h2`
   letter-spacing: 2px;
   margin-bottom: 20px;
   text-shadow: 0 0 10px currentColor;
+
+  @media (max-width: 640px) {
+    font-size: 1.3rem;
+    margin: 0 0 8px;
+    letter-spacing: 1.5px;
+  }
 `;
 
 const SessionList = styled.div`
@@ -34,6 +46,11 @@ const SessionList = styled.div`
   gap: 10px;
   max-height: 300px;
   overflow-y: auto;
+
+  @media (max-width: 640px) {
+    gap: 6px;
+    max-height: 220px;
+  }
 `;
 
 const SessionCard = styled.div<{ sessionType: 'focus' | 'break' }>`
@@ -46,6 +63,13 @@ const SessionCard = styled.div<{ sessionType: 'focus' | 'break' }>`
   gap: 15px;
   align-items: center;
   position: relative;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 18px minmax(0, 1fr) auto auto 18px;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 6px;
+  }
 `;
 
 const SessionType = styled.div<{ sessionType: 'focus' | 'break' }>`
@@ -60,24 +84,44 @@ const SessionType = styled.div<{ sessionType: 'focus' | 'break' }>`
   font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
+
+  @media (max-width: 640px) {
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    font-size: 8px;
+  }
 `;
 
 const SessionDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 `;
 
 const TimeRange = styled.div`
   color: #e5e7eb;
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+
+  @media (max-width: 640px) {
+    font-size: 11px;
+    white-space: nowrap;
+  }
 `;
 
 const TaskDescription = styled.div`
   color: #9ca3af;
   font-size: 12px;
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 `;
 
 const Duration = styled.div<{ sessionType: 'focus' | 'break' }>`
@@ -85,12 +129,22 @@ const Duration = styled.div<{ sessionType: 'focus' | 'break' }>`
   font-weight: bold;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
+
+  @media (max-width: 640px) {
+    font-size: 11px;
+    white-space: nowrap;
+  }
 `;
 
 const Stats = styled.div`
   text-align: right;
   font-size: 12px;
   color: #6b7280;
+
+  @media (max-width: 640px) {
+    font-size: 10px;
+    white-space: nowrap;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -98,6 +152,11 @@ const EmptyState = styled.div`
   color: #6b7280;
   font-style: italic;
   padding: 40px;
+
+  @media (max-width: 640px) {
+    padding: 20px 12px;
+    font-size: 13px;
+  }
 `;
 
 const DeleteButton = styled.button`
@@ -124,7 +183,7 @@ const DeleteButton = styled.button`
     background: rgba(239, 68, 68, 0.15);
     border-color: #ef4444;
     transform: scale(1.05);
-    
+
     svg {
       color: #ff5555;
     }
@@ -133,6 +192,14 @@ const DeleteButton = styled.button`
   &:active {
     transform: scale(0.95);
     background: rgba(239, 68, 68, 0.25);
+  }
+
+  @media (max-width: 640px) {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+    border-radius: 4px;
+    padding: 0;
   }
 `;
 
@@ -175,10 +242,10 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions, onRemoveSessi
 
   return (
     <Container>
-      <Title>🎯 Mission Log 🎯</Title>
-      
+      <Title>Mission Log</Title>
+
       {totalSessions > 0 && (
-        <Stats style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <Stats style={{ marginBottom: '12px', textAlign: 'center' }}>
           Today: {focusSessions} focus • {breakSessions} breaks • {formatSessionDuration(new Date(0), new Date(totalFocusTime))} total focus
         </Stats>
       )}
@@ -186,7 +253,7 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions, onRemoveSessi
       <SessionList>
         {sortedSessions.length === 0 ? (
           <EmptyState>
-            No missions completed yet. Start your first session! 🚀
+            No sessions yet.
           </EmptyState>
         ) : (
           sortedSessions.slice(0, 30).map((session) => (

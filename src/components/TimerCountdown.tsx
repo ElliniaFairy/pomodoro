@@ -21,6 +21,10 @@ const Container = styled.div`
   padding: 20px;
   max-width: 400px;
   margin: 0 auto;
+
+  @media (max-width: 640px) {
+    padding: 6px 12px 2px;
+  }
 `;
 
 const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'break' }>`
@@ -33,6 +37,10 @@ const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'br
   }};
   padding: -20px;
   text-shadow: 0 0 10px currentColor;
+
+  @media (max-width: 640px) {
+    font-size: 3.5rem;
+  }
 `;
 
 /** The pomodoro timer display. */

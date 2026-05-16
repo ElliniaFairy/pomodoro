@@ -30,8 +30,8 @@ const CHECKLIST_ITEMS_WORK = [
 const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, style }) => {
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
   const [isCompleting, setIsCompleting] = useState(false);
-  
-  // Read query parameter to determine mode (default: private)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+
   const searchParams = new URLSearchParams(window.location.search);
   const mode = searchParams.get('mode') || 'private';
   const currentChecklist = mode === 'work' ? CHECKLIST_ITEMS_WORK : CHECKLIST_ITEMS_PRIVATE;
@@ -44,16 +44,15 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
       newChecked.add(index);
     }
     setCheckedItems(newChecked);
-    
+
     if (newChecked.size === currentChecklist.length) {
       setIsCompleting(true);
       setTimeout(() => {
         onAllItemsCompleted();
-      }, 2500); // 0.5s + 2s
+      }, 2500);
     }
   };
 
-  // Calculate dynamic grid dimensions
   const itemCount = currentChecklist.length;
   const columns = 2;
   const rows = Math.ceil(itemCount / columns);
@@ -63,12 +62,12 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
       display: 'grid',
       gridTemplateColumns: `repeat(${columns}, 1fr)`,
       gridTemplateRows: `repeat(${rows}, 1fr)`,
-      rowGap: '20px',
-      columnGap: '40px',
+      rowGap: isMobile ? '6px' : '20px',
+      columnGap: isMobile ? '8px' : '40px',
       maxWidth: '800px',
       margin: '0 auto',
-      padding: '20px',
-      height: `${rows * 100}px`,
+      padding: isMobile ? '4px 0 8px' : '20px',
+      height: isMobile ? 'auto' : `${rows * 100}px`,
       opacity: isCompleting ? 0 : 1,
       transition: isCompleting ? 'opacity 2s ease-in-out 0.5s' : 'none',
       ...style
@@ -81,31 +80,33 @@ const BreakChecklist: React.FC<BreakChecklistProps> = ({ onAllItemsCompleted, st
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '15px',
+            padding: isMobile ? '6px 8px' : '15px',
             border: `2px solid ${
-              isCompleting ? '#ffd700' : 
+              isCompleting ? '#ffd700' :
               checkedItems.has(index) ? '#00ff88' : '#ff4444'
             }`,
-            borderRadius: '12px',
+            borderRadius: isMobile ? '8px' : '12px',
             cursor: 'pointer',
-            backgroundColor: 
+            backgroundColor:
               isCompleting ? 'rgba(255, 215, 0, 0.3)' :
               checkedItems.has(index) ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 68, 68, 0.2)',
-            fontSize: '20px',
+            fontSize: isMobile ? '13px' : '20px',
             textAlign: 'center',
-            color: 
+            color:
               isCompleting ? '#ffd700' :
               checkedItems.has(index) ? '#00ff88' : '#ff4444',
             fontWeight: '500',
             fontFamily: 'Hiragino Sans GB',
             transition: 'all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            transform: 
+            lineHeight: isMobile ? '1.2' : 'normal',
+            minHeight: isMobile ? '40px' : 'auto',
+            transform:
               isCompleting ? 'scale(1.05)' :
               checkedItems.has(index) ? 'scale(1.02)' : 'scale(1)',
-            boxShadow: 
+            boxShadow:
               isCompleting ? '0 0 30px rgba(255, 215, 0, 0.8), inset 0 0 30px rgba(255, 215, 0, 0.3)' :
-              checkedItems.has(index) 
-                ? '0 0 20px rgba(0, 255, 136, 0.4), inset 0 0 20px rgba(0, 255, 136, 0.1)' 
+              checkedItems.has(index)
+                ? '0 0 20px rgba(0, 255, 136, 0.4), inset 0 0 20px rgba(0, 255, 136, 0.1)'
                 : '0 0 10px rgba(255, 68, 68, 0.3), inset 0 0 10px rgba(255, 68, 68, 0.1)',
           }}
         >

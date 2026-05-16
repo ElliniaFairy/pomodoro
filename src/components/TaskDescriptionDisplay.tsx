@@ -16,6 +16,11 @@ const DescriptionContainer = styled.div`
   font-weight: 400;
   color: #ffffff7c;
   cursor: pointer;
+
+  @media (max-width: 640px) {
+    margin: -4px auto 4px;
+    font-size: 13px;
+  }
 `;
 
 const TaskDescriptionDisplay: React.FC<TaskDescriptionDisplayProps> = ({
