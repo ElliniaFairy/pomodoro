@@ -7,7 +7,10 @@ import SpaceshipControlPanel from './SpaceshipControlPanel';
 import SessionHistory from './SessionHistory';
 import BreakChecklist from './BreakChecklist';
 import AddDescriptionModal from './AddDescriptionModal';
+import SetTimeModal from './SetTimeModal';
+import SettingsModal from './SettingsModal';
 import TaskDescriptionDisplay from './TaskDescriptionDisplay';
+import { Settings } from 'lucide-react';
 
 const PageContainer = styled.div`
   padding: 20px;
@@ -141,6 +144,35 @@ const RetroButton = styled.button<{ variant?: 'secondary' }>`
   }
 `;
 
+const SettingsButton = styled.button`
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  color: rgba(0, 255, 255, 0.6);
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #00ffff;
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+  }
+
+  @media (max-width: 640px) {
+    top: 8px;
+    right: 8px;
+    padding: 6px;
+  }
+`;
+
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = React.useState(
     typeof window !== 'undefined' && window.innerWidth <= 640
@@ -156,10 +188,12 @@ const useIsMobile = () => {
 const PomodoroTimer: React.FC = () => {
   const [checklistCompleted, setChecklistCompleted] = React.useState(false);
   const [isDescriptionModalOpened, setIsDescriptionModalOpened] = React.useState(false);
+  const [isSetTimeModalOpened, setIsSetTimeModalOpened] = React.useState(false);
+  const [isSettingsModalOpened, setIsSettingsModalOpened] = React.useState(false);
   const [showMobileRetro, setShowMobileRetro] = React.useState(false);
   const [mobileRetroTime, setMobileRetroTime] = React.useState('');
   const isMobile = useIsMobile();
-  
+
   const {
     currentSession,
     history,
@@ -168,10 +202,12 @@ const PomodoroTimer: React.FC = () => {
     timeRemaining,
     startSession,
     adjustTime,
+    setRemainingTime,
     addDescription,
     completeSession,
     removeSession,
     removeHistorySession,
+    updateSettings,
   } = useTimer();
 
   const handleStartFocus = () => {
@@ -237,13 +273,34 @@ const PomodoroTimer: React.FC = () => {
 
   return (
     <PageContainer>
+      <SettingsButton onClick={() => setIsSettingsModalOpened(true)}>
+        <Settings size={20} />
+      </SettingsButton>
+
+      {isSettingsModalOpened && (
+        <SettingsModal
+          settings={settings}
+          onUpdateSettings={updateSettings}
+          onClose={() => setIsSettingsModalOpened(false)}
+        />
+      )}
+
       <ScrollArea>
         {currentSession && (
           <>
             <TimerCountdown
               timeRemaining={timeRemaining}
               sessionType={currentSession.type}
+              onClick={() => setIsSetTimeModalOpened(true)}
             />
+
+            {isSetTimeModalOpened && (
+              <SetTimeModal
+                currentRemainingMs={timeRemaining}
+                onSetTime={setRemainingTime}
+                onClose={() => setIsSetTimeModalOpened(false)}
+              />
+            )}
 
             {isDescriptionModalOpened &&
               (<AddDescriptionModal

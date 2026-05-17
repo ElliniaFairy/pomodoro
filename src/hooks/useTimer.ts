@@ -65,10 +65,10 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
 
     case 'ADJUST_TIME': {
       if (!state.currentSession || !state.currentSession.endTime) return state;
-      
+
       const now = new Date();
       const currentEndTime = state.currentSession.endTime;
-      
+
       let newEndTime: Date;
       if (currentEndTime > now) {
         // Timer is still running - adjust from planned end time
@@ -78,12 +78,23 @@ function timerReducer(state: AppState, action: TimerAction): AppState {
         const adjustmentMinutes = Math.max(action.durationChange, 1);
         newEndTime = addMinutes(now, adjustmentMinutes);
       }
-      
+
       return {
         ...state,
         currentSession: {
           ...state.currentSession,
           endTime: newEndTime,
+        },
+      };
+    }
+
+    case 'SET_REMAINING_TIME': {
+      if (!state.currentSession) return state;
+      return {
+        ...state,
+        currentSession: {
+          ...state.currentSession,
+          endTime: new Date(Date.now() + action.remainingMs),
         },
       };
     }
@@ -303,6 +314,24 @@ function useTimer() {
       dispatch({
         type: 'ADJUST_TIME',
         durationChange,
+      });
+    },
+    setRemainingTime: (minutes: number) => {
+      if (!state.currentSession) return;
+      const remainingMs = minutes * 60 * 1000;
+      const newEndTime = new Date(Date.now() + remainingMs);
+      saveRemoteCurrentSession({
+        ...state.currentSession,
+        endTime: newEndTime,
+      }).then((savedSession) => {
+        if (!savedSession) return;
+        dispatch({ type: 'INITIALIZE_CURRENT_SESSION', session: savedSession });
+      }).catch((error) => {
+        console.warn('Failed to save current session remotely:', error);
+      });
+      dispatch({
+        type: 'SET_REMAINING_TIME',
+        remainingMs,
       });
     },
     completeSession: () => {

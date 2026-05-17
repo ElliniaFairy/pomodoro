@@ -24,12 +24,13 @@ export interface UserProgress {
   lastSessionDate?: Date;
 }
 
-export type TimerAction = 
+export type TimerAction =
   | { type: 'START_SESSION'; session: PomodoroSession; completedSession?: PomodoroSession }
   | { type: 'REMOVE_SESSION' } // cancels current session, no recording
   | { type: 'REMOVE_HISTORY_SESSION'; sessionId: string } // removes specific session from history
   | { type: 'ADD_DESCRIPTION'; description: string } // adds task description for the current session
   | { type: 'ADJUST_TIME'; durationChange: number } // +3 or -5 minutes
+  | { type: 'SET_REMAINING_TIME'; remainingMs: number } // sets the remaining time directly
   | { type: 'COMPLETE_SESSION'; session: PomodoroSession } // finishes session, gets recorded
   | { type: 'UPDATE_SETTINGS'; settings: Partial<TimerSettings> }
   | { type: 'INITIALIZE_CURRENT_SESSION'; session: PomodoroSession | null }
