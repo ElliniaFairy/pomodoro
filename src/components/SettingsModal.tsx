@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import type { TimerSettings } from '../types/timer';
 
@@ -30,6 +30,12 @@ const ModalPanel = styled.div`
   max-width: 500px;
   width: 90%;
   position: relative;
+
+  @media (max-width: 640px) {
+    padding: 20px 24px;
+    width: auto;
+    margin: 0 32px;
+  }
 `;
 
 const ModalTitle = styled.div`
@@ -41,6 +47,12 @@ const ModalTitle = styled.div`
   color: #00ffff;
   text-transform: uppercase;
   letter-spacing: 2px;
+
+  @media (max-width: 640px) {
+    font-size: 16px;
+    margin: 0 0 16px;
+    letter-spacing: 1px;
+  }
 `;
 
 const SectionTitle = styled.div`
@@ -58,6 +70,7 @@ const SettingRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
 `;
 
@@ -66,6 +79,10 @@ const SettingLabel = styled.label`
   font-size: 16px;
   color: #ffffff;
   font-weight: 500;
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
 `;
 
 const SettingInputGroup = styled.div`
@@ -104,6 +121,11 @@ const ButtonContainer = styled.div`
   gap: 30px;
   justify-content: center;
   margin-top: 24px;
+
+  @media (max-width: 640px) {
+    gap: 16px;
+    margin-top: 16px;
+  }
 `;
 
 const SubmitButton = styled.button`
@@ -121,14 +143,33 @@ const SubmitButton = styled.button`
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 640px) {
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
 `;
 
 const CancelButton = styled(SubmitButton)`
   background: linear-gradient(135deg, #424242 0%, #212121 100%);
   border-color: #666;
+
+  @media (max-width: 640px) {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
 `;
 
 function SettingsModal({ settings, onUpdateSettings, onClose }: SettingsModalProps) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 640);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
   const [focusDuration, setFocusDuration] = useState(settings.defaultFocusDuration.toString());
   const [breakDuration, setBreakDuration] = useState(
     Math.round(settings.defaultFocusDuration * settings.breakRatio).toString()
@@ -186,10 +227,10 @@ function SettingsModal({ settings, onUpdateSettings, onClose }: SettingsModalPro
 
         <ButtonContainer>
           <SubmitButton onClick={handleSave}>
-            ✅ Save
+            {isMobile ? 'Save' : '✅ Save'}
           </SubmitButton>
           <CancelButton onClick={onClose}>
-            ❌ Cancel
+            {isMobile ? 'Cancel' : '❌ Cancel'}
           </CancelButton>
         </ButtonContainer>
       </ModalPanel>
