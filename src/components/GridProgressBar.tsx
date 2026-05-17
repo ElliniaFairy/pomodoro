@@ -18,10 +18,10 @@ const Container = styled.div`
   padding: -40px -40px;
 `;
 
-const Grid = styled.div<{ rows: number; cols: number }>`
+const Grid = styled.div<{ $rows: number; $cols: number }>`
   display: grid;
-  grid-template-rows: repeat(${props => props.rows}, 1fr);
-  grid-template-columns: repeat(${props => props.cols}, 1fr);
+  grid-template-rows: repeat(${props => props.$rows}, 1fr);
+  grid-template-columns: repeat(${props => props.$cols}, 1fr);
   gap: 2px;
   background: #1a1a1a;
   padding: 8px;
@@ -29,10 +29,10 @@ const Grid = styled.div<{ rows: number; cols: number }>`
   aspect-ratio: 2.5/1;
 `;
 
-const Block = styled.div<{ filled: boolean; sessionType: 'focus' | 'break' }>`
+const Block = styled.div<{ $filled: boolean; $sessionType: 'focus' | 'break' }>`
   background: ${props => {
-    if (!props.filled) return '#333';
-    return props.sessionType === 'focus' ? '#22c55e' : '#ff1493';
+    if (!props.$filled) return '#333';
+    return props.$sessionType === 'focus' ? '#22c55e' : '#ff1493';
   }};
   border-radius: 2px;
   transition: all 0.3s ease;
@@ -64,12 +64,12 @@ const GridProgressBar: React.FC<GridProgressBarProps> = ({
 
   return (
     <Container style={style}>
-      <Grid rows={rows} cols={cols}>
+      <Grid $rows={rows} $cols={cols}>
         {Array.from({ length: totalBlocks }, (_, index) => (
           <Block
             key={index}
-            filled={filledIndices.has(index)}
-            sessionType={sessionType}
+            $filled={filledIndices.has(index)}
+            $sessionType={sessionType}
           />
         ))}
       </Grid>

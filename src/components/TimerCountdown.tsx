@@ -27,13 +27,13 @@ const Container = styled.div`
   }
 `;
 
-const TimeDisplay = styled.div<{ isOvertime: boolean; sessionType: 'focus' | 'break' }>`
+const TimeDisplay = styled.div<{ $isOvertime: boolean; $sessionType: 'focus' | 'break' }>`
   font-size: 5rem;
   font-family: 'Inter', sans-serif;
   font-weight: bold;
   color: ${props => {
-    if (props.isOvertime) return '#ff4444';
-    return props.sessionType === 'focus' ? '#22c55e' : '#ff1493';
+    if (props.$isOvertime) return '#ff4444';
+    return props.$sessionType === 'focus' ? '#22c55e' : '#ff1493';
   }};
   padding: -20px;
   text-shadow: 0 0 10px currentColor;
@@ -54,7 +54,7 @@ const TimerCountdown: React.FC<TimerCountdownProps> = ({
 
   return (
     <Container onClick={onClick}>
-      <TimeDisplay isOvertime={isOvertime} sessionType={sessionType}>
+      <TimeDisplay $isOvertime={isOvertime} $sessionType={sessionType}>
         {isOvertime ? '+' : ''}{display}
       </TimeDisplay>
     </Container>

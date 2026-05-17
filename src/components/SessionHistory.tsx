@@ -62,9 +62,9 @@ const SessionList = styled.div`
   }
 `;
 
-const SessionCard = styled.div<{ sessionType: 'focus' | 'break' }>`
+const SessionCard = styled.div<{ $sessionType: 'focus' | 'break' }>`
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid ${props => props.sessionType === 'focus' ? '#22c55e' : '#ff1493'};
+  border: 1px solid ${props => props.$sessionType === 'focus' ? '#22c55e' : '#ff1493'};
   border-radius: 8px;
   padding: 15px;
   display: grid;
@@ -81,10 +81,10 @@ const SessionCard = styled.div<{ sessionType: 'focus' | 'break' }>`
   }
 `;
 
-const SessionType = styled.div<{ sessionType: 'focus' | 'break' }>`
+const SessionType = styled.div<{ $sessionType: 'focus' | 'break' }>`
   width: 30px;
   height: 30px;
-  background: ${props => props.sessionType === 'focus' ? '#22c55e' : '#ff1493'};
+  background: ${props => props.$sessionType === 'focus' ? '#22c55e' : '#ff1493'};
   color: white;
   border-radius: 15px;
   display: flex;
@@ -133,8 +133,8 @@ const TaskDescription = styled.div`
   }
 `;
 
-const Duration = styled.div<{ sessionType: 'focus' | 'break' }>`
-  color: ${props => props.sessionType === 'focus' ? '#22c55e' : '#ff1493'};
+const Duration = styled.div<{ $sessionType: 'focus' | 'break' }>`
+  color: ${props => props.$sessionType === 'focus' ? '#22c55e' : '#ff1493'};
   font-weight: bold;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
@@ -266,8 +266,8 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions, onRemoveSessi
           </EmptyState>
         ) : (
           sortedSessions.slice(0, 30).map((session) => (
-            <SessionCard key={session.id} sessionType={session.type}>
-              <SessionType sessionType={session.type}>
+            <SessionCard key={session.id} $sessionType={session.type}>
+              <SessionType $sessionType={session.type}>
               </SessionType>
               
               <SessionDetails>
@@ -279,7 +279,7 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions, onRemoveSessi
                 )}
               </SessionDetails>
               
-              <Duration sessionType={session.type}>
+              <Duration $sessionType={session.type}>
                 {formatSessionDuration(new Date(session.startTime), new Date(session.endTime))}
               </Duration>
               
